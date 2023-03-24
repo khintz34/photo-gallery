@@ -1,0 +1,6 @@
+#menuContainer {
+  width: 20vw;
+  height: 100vh;
+  background-color: var(--accent-gray);
+  color: var(--main-font);
+}
