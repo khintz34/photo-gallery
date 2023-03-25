@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { PhotoArray } from "../../assets/PhotoArray";
 import "./Gallery.css";
+import format from "date-fns/format";
+import Viewport from "../viewingPort/ViewPort";
 
 const Gallery = () => {
   const sortedPhotoArray = PhotoArray.sort(function (a, b) {
@@ -8,11 +10,22 @@ const Gallery = () => {
   });
   const [photoList, setPhotoList] = useState(PhotoArray);
 
-  console.log(photoList[0].date);
+  const firstDate = format(new Date(photoList[0].date), "PPP");
+  const lastDate = format(new Date(photoList.at(-1).date), "PPP");
+  const [showViewport, setShowViewport] = useState("hide");
+  const [viewImage, setViewImage] = useState(0);
+
+  const closeModal = () => {
+    if (showViewport === "show") {
+      setShowViewport("hide");
+    }
+  };
 
   return (
-    <div id="galleryContainer">
-      <div id="dateContainer">Date</div>
+    <div id="galleryContainer" onClick={closeModal}>
+      <div id="dateContainer">
+        {firstDate} - {lastDate}{" "}
+      </div>
       <div id="galleryMain">
         {(() => {
           let pics = [];
@@ -23,12 +36,19 @@ const Gallery = () => {
                   src={photoList[i].image}
                   alt={photoList[i].name}
                   className="photoArrayImage"
+                  onClick={() => {
+                    setShowViewport("show");
+                    setViewImage(i);
+                  }}
                 />
               </div>
             );
           }
           return pics;
         })()}
+      </div>
+      <div className="viewportContainer">
+        <Viewport status={showViewport} list={photoList} num={viewImage} />
       </div>
     </div>
   );
