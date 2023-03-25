@@ -1,12 +1,12 @@
 #headerContainer {
-  width: 80vw;
+  width: 100vw;
   height: 10vh;
-  display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   background-color: var(--accent-gray);
   color: var(--main-font);
+  display: none;
 }
 
 h1 {
@@ -16,13 +16,13 @@ h1 {
   font-size: 8vh;
 }
 
-.menuBtn {
-  display: none;
-}
-
 /* ! MOBILE STULES */
 
 @media (max-width: 500px) {
+  #headerContainer {
+    display: flex;
+  }
+
   #mainHeader {
     font-size: 5vh;
   }

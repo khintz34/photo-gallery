@@ -1,3 +1,36 @@
 #galleryContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20vw;
+  padding-top: 5vh;
+}
+
+#dateContainer {
+  width: 100%;
+  text-align: left;
+  padding: 0vh 0 3vh 5vw;
+}
+
+#galleryMain {
   height: 90vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  gap: 3vw;
+  width: 80vw;
+  justify-items: center;
+}
+
+.picContainer {
+  height: 10vw;
+  width: 10vw;
+  color: white;
+}
+
+.photoArrayImage {
+  object-fit: contain;
+  height: 100%;
+  width: 100%;
 }
