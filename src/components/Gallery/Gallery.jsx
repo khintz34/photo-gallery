@@ -20,6 +20,8 @@ const Gallery = () => {
   const changeViewingStatus = useViewPortStore((state) => state.changeStatus);
   const viewingNumber = useViewNumberStore((state) => state.viewingNumber);
   const changeViewingNumber = useViewNumberStore((state) => state.changeStatus);
+  const increaseNumber = useViewNumberStore((state) => state.increaseNumber);
+  const decreaseNumber = useViewNumberStore((state) => state.decreaseNumber);
 
   const closeModal = () => {
     if (viewingStatus === "show") {
@@ -27,28 +29,48 @@ const Gallery = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(viewingStatus);
-  });
+  document.onkeydown = checkKey;
+
+  function checkKey(e, direction) {
+    e = e || window.event;
+
+    if (e.keyCode == "37" || direction === "i") {
+      // left arrow
+      if (viewingNumber === 0) {
+        changeViewingStatus("hide");
+        return;
+      }
+      decreaseNumber();
+    } else if (e.keyCode == "39" || direction === "d") {
+      // right arrow
+      if (viewingNumber === photoList.length - 1) {
+        changeViewingStatus("hide");
+        return;
+      }
+      increaseNumber();
+    }
+  }
 
   return (
-    <div id="galleryContainer" onClick={closeModal}>
+    <div id="galleryContainer">
       <div id="dateContainer">
         {firstDate} - {lastDate}{" "}
       </div>
-      <div id="galleryMain">
+      <div id="galleryMain" onClick={closeModal}>
         {(() => {
           let pics = [];
           for (let i = 0; i < PhotoArray.length; i++) {
             pics.push(
               <div className="picContainer" key={`${photoList[i].name}-image`}>
                 <img
+                  id={`photoImage-${i}`}
                   src={photoList[i].image}
                   alt={photoList[i].name}
                   className="photoArrayImage"
                   onClick={() => {
                     setViewImage(i);
                     changeViewingStatus("show");
+                    changeViewingNumber(i);
                   }}
                 />
               </div>
@@ -57,8 +79,17 @@ const Gallery = () => {
           return pics;
         })()}
       </div>
-      <div className={`viewportContainer ${viewingStatus}`}>
-        <Viewport list={photoList} num={viewImage} />
+      <div
+        className={`viewportContainer ${viewingStatus}`}
+        onKeyDown={(e) => checkKey(e)}
+      >
+        <img src={photoList[viewingNumber].image} className="viewport" alt="" />
+      </div>
+      <div className={viewingStatus}>
+        <button onClick={(e) => checkKey(e, "i")}>{"<--"}</button>
+        <button onClick={(e) => checkKey(e, "d")}>{"-->"}</button>
+
+        <img src={photoList[viewingNumber].image} className="testing" alt="" />
       </div>
     </div>
   );

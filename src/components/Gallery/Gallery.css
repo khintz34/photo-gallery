@@ -46,3 +46,26 @@
 .show {
   display: flex;
 }
+
+.viewport {
+  border: 1px solid white;
+  position: fixed;
+  top: 0;
+  left: 20vw;
+  height: 100vh;
+  width: 80vw;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--main-background);
+}
+
+button {
+  z-index: 50;
+}
+
+.testing {
+  height: 10vh;
+  width: 10vh;
+}

@@ -1,19 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./ViewPort.css";
 import { useViewPortStore } from "../../stores/viewPortStore";
+import { useViewNumberStore } from "../../stores/viewNumberStore";
 
 const Viewport = (props) => {
   const [indexNum, setIndexNum] = useState(props.num);
   const list = props.list;
   const viewingStatus = useViewPortStore((state) => state.viewingStatus);
   const changeViewingStatus = useViewPortStore((state) => state.changeStatus);
+  const viewingNumber = useViewNumberStore((state) => state.viewingNumber);
+  const changeViewingNumber = useViewNumberStore((state) => state.changeStatus);
   const viewingRef = useRef();
-  console.log(indexNum);
-  console.log("num", props.num);
-
-  useEffect(() => {
-    setIndexNum(props.num);
-  }, [indexNum]);
+  console.log(viewingNumber);
 
   useEffect(() => {
     if (viewingStatus === "show") {
@@ -21,36 +19,45 @@ const Viewport = (props) => {
     }
   }, [viewingStatus]);
 
+  useEffect(() => console.log(indexNum, "INDEX USE"), [indexNum]);
+
   function checkKey(e) {
     e = e || window.event;
-    console.log(indexNum);
 
     if (e.keyCode == "37") {
       // left arrow
-      if (indexNum === 0) {
+      if (viewingNumber === 0) {
         console.log("hide");
         changeViewingStatus("hide");
         return;
       }
-      let newNum = indexNum - 1;
-      setIndexNum(newNum);
+      let newNum = viewingNumber - 1;
+      changeViewingNumber(newNum);
+      console.log(viewingNumber);
+      let numNew = indexNum - 1;
+      setIndexNum(numNew);
     } else if (e.keyCode == "39") {
       // right arrow
-      if (indexNum === list.length - 1) {
+      if (viewingNumber === list.length - 1) {
         /* ! work on this */
         changeViewingStatus("hide");
         return;
       }
-      let newNum = indexNum + 1;
-      setIndexNum(newNum);
+      console.log("viewingNum RIght:", viewingNumber);
+      let newNum = viewingNumber + 1;
+      changeViewingNumber(newNum);
+
+      console.log("indexNum RIght:", indexNum);
+      let numNew = indexNum + 1;
+      setIndexNum(numNew);
     }
   }
 
   return (
     <div className={`viewPort`} onKeyDown={(e) => checkKey(e)} ref={viewingRef}>
       <img
-        src={list[indexNum].image}
-        alt={list[indexNum].name}
+        src={list[viewingNumber].image}
+        alt={list[viewingNumber].name}
         className="viewPortImg"
       />
     </div>
