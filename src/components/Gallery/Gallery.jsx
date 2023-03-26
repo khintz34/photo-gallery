@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PhotoArray } from "../../assets/PhotoArray";
 import "./Gallery.css";
 import format from "date-fns/format";
 import Viewport from "../viewingPort/ViewPort";
+import { useViewPortStore } from "../../stores/viewPortStore";
+import { useViewNumberStore } from "../../stores/viewNumberStore";
 
 const Gallery = () => {
   const sortedPhotoArray = PhotoArray.sort(function (a, b) {
@@ -14,12 +16,20 @@ const Gallery = () => {
   const lastDate = format(new Date(photoList.at(-1).date), "PPP");
   const [showViewport, setShowViewport] = useState("hide");
   const [viewImage, setViewImage] = useState(0);
+  const viewingStatus = useViewPortStore((state) => state.viewingStatus);
+  const changeViewingStatus = useViewPortStore((state) => state.changeStatus);
+  const viewingNumber = useViewNumberStore((state) => state.viewingNumber);
+  const changeViewingNumber = useViewNumberStore((state) => state.changeStatus);
 
   const closeModal = () => {
-    if (showViewport === "show") {
-      setShowViewport("hide");
+    if (viewingStatus === "show") {
+      changeViewingStatus("hide");
     }
   };
+
+  useEffect(() => {
+    console.log(viewingStatus);
+  });
 
   return (
     <div id="galleryContainer" onClick={closeModal}>
@@ -37,8 +47,8 @@ const Gallery = () => {
                   alt={photoList[i].name}
                   className="photoArrayImage"
                   onClick={() => {
-                    setShowViewport("show");
                     setViewImage(i);
+                    changeViewingStatus("show");
                   }}
                 />
               </div>
@@ -47,8 +57,8 @@ const Gallery = () => {
           return pics;
         })()}
       </div>
-      <div className="viewportContainer">
-        <Viewport status={showViewport} list={photoList} num={viewImage} />
+      <div className={`viewportContainer ${viewingStatus}`}>
+        <Viewport list={photoList} num={viewImage} />
       </div>
     </div>
   );
