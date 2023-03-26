@@ -48,6 +48,8 @@ const Gallery = () => {
         return;
       }
       increaseNumber();
+    } else if (e.keyCode == "40") {
+      changeViewingStatus("hide");
     }
   }
 
@@ -84,12 +86,6 @@ const Gallery = () => {
         onKeyDown={(e) => checkKey(e)}
       >
         <img src={photoList[viewingNumber].image} className="viewport" alt="" />
-      </div>
-      <div className={viewingStatus}>
-        <button onClick={(e) => checkKey(e, "i")}>{"<--"}</button>
-        <button onClick={(e) => checkKey(e, "d")}>{"-->"}</button>
-
-        <img src={photoList[viewingNumber].image} className="testing" alt="" />
       </div>
     </div>
   );
