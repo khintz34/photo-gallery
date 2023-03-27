@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { PhotoArray } from "../../assets/PhotoArray";
 import "./Gallery.css";
 import format from "date-fns/format";
-import Viewport from "../viewingPort/ViewPort";
 import { useViewPortStore } from "../../stores/viewPortStore";
 import { useViewNumberStore } from "../../stores/viewNumberStore";
+import { faX } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Gallery = () => {
   const sortedPhotoArray = PhotoArray.sort(function (a, b) {
@@ -87,9 +88,12 @@ const Gallery = () => {
         onClick={closeModal}
       >
         <img src={photoList[viewingNumber].image} className="viewport" alt="" />
-        {/* <h3 className="viewportDate">{firstDate}</h3> */}
-        {/* NEED TO ADD DATE HERE */}
-        {/* ADD A CLOSE BTN TOO */}
+        <h3 className="viewportDate">
+          {format(new Date(photoList[viewingNumber].date), "PPP")}
+        </h3>
+        <button className="exitBtn">
+          <FontAwesomeIcon icon={faX} onClick={closeModal} />
+        </button>
       </div>
     </div>
   );

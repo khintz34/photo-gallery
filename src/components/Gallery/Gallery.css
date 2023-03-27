@@ -55,7 +55,6 @@
   background-color: var(--main-background);
   height: 100vh;
   width: 80vw;
-  display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -71,6 +70,13 @@
 }
 
 .viewportDate {
-  position: relative;
+  position: absolute;
   top: 0;
+}
+
+.exitBtn {
+  position: absolute;
+  top: 0;
+  right: 1em;
+  margin-top: 1em;
 }
