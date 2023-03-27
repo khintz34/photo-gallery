@@ -84,8 +84,12 @@ const Gallery = () => {
       <div
         className={`viewportContainer ${viewingStatus}`}
         onKeyDown={(e) => checkKey(e)}
+        onClick={closeModal}
       >
         <img src={photoList[viewingNumber].image} className="viewport" alt="" />
+        {/* <h3 className="viewportDate">{firstDate}</h3> */}
+        {/* NEED TO ADD DATE HERE */}
+        {/* ADD A CLOSE BTN TOO */}
       </div>
     </div>
   );
