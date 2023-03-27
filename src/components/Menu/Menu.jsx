@@ -13,21 +13,42 @@ const Menu = () => {
   const increaseNumber = useViewNumberStore((state) => state.increaseNumber);
   const decreaseNumber = useViewNumberStore((state) => state.decreaseNumber);
   const [placeList, setPlaceList] = useState([]);
+  const [peopleList, setPeopleList] = useState([]);
+  const [albumList, setAlbumList] = useState([]);
 
   const getPlaceList = () => {
-    let list = [];
+    let placesList = [];
     PhotoArray.map((val) => {
       if (val.places.length !== 0) {
         val.places.map((place) => {
-          list.push(capAll(place));
-          console.log(capAll(place));
+          placesList.push(capAll(place));
         });
       }
     });
-    eliminateDuplicates(list);
+    eliminateDuplicates(placesList, "places");
   };
 
-  function eliminateDuplicates(arr) {
+  const getPeopleList = () => {
+    let peoplesList = [];
+    PhotoArray.map((val) => {
+      if (val.people.length !== 0) {
+        val.people.map((person) => {
+          peoplesList.push(capAll(person));
+        });
+      }
+    });
+    eliminateDuplicates(peoplesList, "people");
+  };
+
+  const getAlbumList = () => {
+    let list = [];
+    PhotoArray.map((val) => {
+      list.push(capAll(val.album));
+    });
+    eliminateDuplicates(list, "album");
+  };
+
+  function eliminateDuplicates(arr, name) {
     let i,
       len = arr.length,
       out = [],
@@ -39,27 +60,50 @@ const Menu = () => {
     for (i in obj) {
       out.push(i);
     }
-    sortList(out);
+    sortList(out, name);
   }
 
-  function sortList(arr) {
+  function sortList(arr, name) {
     arr.sort();
-    setPlaceList(arr);
+    if (name === "places") {
+      setPlaceList(arr);
+    } else if (name === "people") {
+      setPeopleList(arr);
+    } else {
+      setAlbumList(arr);
+    }
   }
 
   useEffect(() => {
     getPlaceList();
+    getPeopleList();
+    getAlbumList();
   }, []);
 
   return (
     <div id="menuContainer">
       <ul className="menuList">
         <li>All Photos</li>
-        <li>People</li>
-        <li>Places</li>
+        <label htmlFor="people">People</label>
+
+        <select name="people" id="people">
+          <option value="" disabled selected hidden>
+            Choose Person
+          </option>
+          {peopleList.map((val) => {
+            return (
+              <option value={val} key={`option-${val}-people`}>
+                {val}
+              </option>
+            );
+          })}
+        </select>
         <label htmlFor="places">Places</label>
 
         <select name="places" id="places">
+          <option value="" disabled selected hidden>
+            Choose Place
+          </option>
           {placeList.map((val) => {
             return (
               <option value={val} key={`option-${val}`}>
@@ -72,8 +116,9 @@ const Menu = () => {
       <div className="albumList">
         <p>Albums</p>
         <ul className="menuList">
-          <li>ALNUM NAME EX</li>
-          <li>Example</li>
+          {albumList.map((val) => {
+            return <li key={`album-${val}`}>{val}</li>;
+          })}
         </ul>
       </div>
       <section className="bottomSection spacing">
