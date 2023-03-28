@@ -26,6 +26,8 @@ const Gallery = () => {
   const decreaseNumber = useViewNumberStore((state) => state.decreaseNumber);
   const currentPlace = useMenuStore((state) => state.place);
   const photoGallery = useGalleryStore((state) => state.gallery);
+  const masterList = useGalleryStore((state) => state.masterList);
+  const updateMaster = useGalleryStore((state) => state.changeMasterList);
 
   const closeModal = () => {
     if (viewingStatus === "show") {
@@ -66,7 +68,6 @@ const Gallery = () => {
         {(() => {
           let pics = [];
           for (let i = 0; i < photoGallery.length; i++) {
-            console.log(photoGallery);
             pics.push(
               <div
                 className="picContainer"

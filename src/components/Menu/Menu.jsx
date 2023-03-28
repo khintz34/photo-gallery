@@ -18,6 +18,7 @@ const Menu = () => {
   const changePlace = useMenuStore((state) => state.changePlace);
   const photoGallery = useGalleryStore((state) => state.gallery);
   const changeGallery = useGalleryStore((state) => state.changeGallery);
+  const masterList = useGalleryStore((state) => state.masterList);
   const placeRef = useRef();
   const personRef = useRef();
 
@@ -86,15 +87,51 @@ const Menu = () => {
   }, []);
 
   const makePersonChange = (e) => {
-    changePerson(e.target.value);
+    const person = e.target.value;
+    changePerson(person);
     changePlace("");
     placeRef.current.selectedIndex = 0;
+    changeAlbum("");
+
+    if (person === "All") {
+      changeGallery(masterList);
+      return;
+    }
+
+    let newList = [];
+    PhotoArray.map((value) => {
+      value.people.map((name) => {
+        if (name === person) {
+          newList.push(value);
+        }
+      });
+    });
+
+    changeGallery(newList);
   };
 
   const makePlaceChange = (e) => {
-    changePlace(e.target.value);
+    const place = e.target.value;
+    changePerson(place);
     changePerson("");
     personRef.current.selectedIndex = 0;
+    changeAlbum("");
+
+    if (place === "All") {
+      changeGallery(masterList);
+      return;
+    }
+
+    let newList = [];
+    PhotoArray.map((value) => {
+      value.places.map((loc) => {
+        if (loc.toLowerCase() === place.toLowerCase()) {
+          newList.push(value);
+        }
+      });
+    });
+
+    changeGallery(newList);
   };
 
   const viewAlbum = (e, name) => {
