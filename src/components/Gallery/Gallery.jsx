@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { PhotoArray } from "../../assets/PhotoArray";
 import "./Gallery.css";
 import format from "date-fns/format";
 import { useViewPortStore } from "../../stores/viewPortStore";
 import { useViewNumberStore } from "../../stores/viewNumberStore";
+import { useMenuStore } from "../../stores/menuStore";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useGalleryStore } from "../../stores/photoGallery";
 
 const Gallery = () => {
   const sortedPhotoArray = PhotoArray.sort(function (a, b) {
@@ -15,7 +17,6 @@ const Gallery = () => {
 
   const firstDate = format(new Date(photoList[0].date), "PPP");
   const lastDate = format(new Date(photoList.at(-1).date), "PPP");
-  const [showViewport, setShowViewport] = useState("hide");
   const [viewImage, setViewImage] = useState(0);
   const viewingStatus = useViewPortStore((state) => state.viewingStatus);
   const changeViewingStatus = useViewPortStore((state) => state.changeStatus);
@@ -23,6 +24,8 @@ const Gallery = () => {
   const changeViewingNumber = useViewNumberStore((state) => state.changeStatus);
   const increaseNumber = useViewNumberStore((state) => state.increaseNumber);
   const decreaseNumber = useViewNumberStore((state) => state.decreaseNumber);
+  const currentPlace = useMenuStore((state) => state.place);
+  const photoGallery = useGalleryStore((state) => state.gallery);
 
   const closeModal = () => {
     if (viewingStatus === "show") {
@@ -44,7 +47,7 @@ const Gallery = () => {
       decreaseNumber();
     } else if (e.keyCode == "39" || direction === "d") {
       // right arrow
-      if (viewingNumber === photoList.length - 1) {
+      if (viewingNumber === photoGallery.length - 1) {
         changeViewingStatus("hide");
         return;
       }
@@ -62,13 +65,17 @@ const Gallery = () => {
       <div id="galleryMain" onClick={closeModal}>
         {(() => {
           let pics = [];
-          for (let i = 0; i < PhotoArray.length; i++) {
+          for (let i = 0; i < photoGallery.length; i++) {
+            console.log(photoGallery);
             pics.push(
-              <div className="picContainer" key={`${photoList[i].name}-image`}>
+              <div
+                className="picContainer"
+                key={`${photoGallery[i].name}-image`}
+              >
                 <img
                   id={`photoImage-${i}`}
-                  src={photoList[i].image}
-                  alt={photoList[i].name}
+                  src={photoGallery[i].image}
+                  alt={photoGallery[i].name}
                   className="photoArrayImage"
                   onClick={() => {
                     setViewImage(i);
@@ -87,7 +94,11 @@ const Gallery = () => {
         onKeyDown={(e) => checkKey(e)}
         onClick={closeModal}
       >
-        <img src={photoList[viewingNumber].image} className="viewport" alt="" />
+        <img
+          src={photoGallery[viewingNumber].image}
+          className="viewport"
+          alt=""
+        />
         <h3 className="viewportDate">
           {format(new Date(photoList[viewingNumber].date), "PPP")}
         </h3>

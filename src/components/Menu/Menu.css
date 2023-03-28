@@ -37,6 +37,10 @@ label {
   margin-top: 20vh;
 }
 
+.album-li {
+  cursor: pointer;
+}
+
 @media (max-width: 500px) {
   #menuContainer {
     display: none;
