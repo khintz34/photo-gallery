@@ -6,11 +6,13 @@ import { useViewNumberStore } from "../../stores/viewNumberStore";
 import { capAll } from "../../assets/utils";
 import { useMenuStore } from "../../stores/menuStore";
 import { useGalleryStore } from "../../stores/photoGallery";
+import testImage from "../../assets/photoLib/bridgeV.jpg";
 
 const Menu = () => {
   const [placeList, setPlaceList] = useState([]);
   const [peopleList, setPeopleList] = useState([]);
   const [albumList, setAlbumList] = useState([]);
+  const [addStatus, setAddStatus] = useState("hide");
   const changeViewingStatus = useViewPortStore((state) => state.changeStatus);
   const changeAlbum = useMenuStore((state) => state.changeAlbum);
   const currentAlbum = useMenuStore((state) => state.album);
@@ -19,12 +21,19 @@ const Menu = () => {
   const photoGallery = useGalleryStore((state) => state.gallery);
   const changeGallery = useGalleryStore((state) => state.changeGallery);
   const masterList = useGalleryStore((state) => state.masterList);
+  const updateMaster = useGalleryStore((state) => state.changeMasterList);
   const placeRef = useRef();
   const personRef = useRef();
+  const [newName, setNewName] = useState("");
+  const [newImage, setNewImage] = useState("");
+  const [newDate, setNewDate] = useState("");
+  const [newPeople, setNewPeople] = useState("");
+  const [newAlbum, setNewAlbum] = useState("");
+  const [newPlace, setNewPlace] = useState("");
 
   const getPlaceList = () => {
     let placesList = [];
-    PhotoArray.map((val) => {
+    masterList.map((val) => {
       if (val.places.length !== 0) {
         val.places.map((place) => {
           placesList.push(capAll(place));
@@ -36,7 +45,7 @@ const Menu = () => {
 
   const getPeopleList = () => {
     let peoplesList = [];
-    PhotoArray.map((val) => {
+    masterList.map((val) => {
       if (val.people.length !== 0) {
         val.people.map((person) => {
           peoplesList.push(capAll(person));
@@ -48,7 +57,7 @@ const Menu = () => {
 
   const getAlbumList = () => {
     let list = [];
-    PhotoArray.map((val) => {
+    masterList.map((val) => {
       list.push(capAll(val.album));
     });
     eliminateDuplicates(list, "album");
@@ -99,7 +108,7 @@ const Menu = () => {
     }
 
     let newList = [];
-    PhotoArray.map((value) => {
+    masterList.map((value) => {
       value.people.map((name) => {
         if (name === person) {
           newList.push(value);
@@ -123,7 +132,7 @@ const Menu = () => {
     }
 
     let newList = [];
-    PhotoArray.map((value) => {
+    masterList.map((value) => {
       value.places.map((loc) => {
         if (loc.toLowerCase() === place.toLowerCase()) {
           newList.push(value);
@@ -142,18 +151,36 @@ const Menu = () => {
     personRef.current.selectedIndex = 0;
 
     if (name === "") {
-      changeGallery(PhotoArray);
+      changeGallery(masterList);
       return;
     }
 
     let newList = [];
-    PhotoArray.map((value) => {
+    masterList.map((value) => {
       if (value.album.toLowerCase() === name.toLowerCase()) {
         newList.push(value);
       }
     });
 
     changeGallery(newList);
+  };
+
+  const addPhoto = () => {
+    if (newImage.length < 1) return;
+    setAddStatus("hide");
+    // let urlCreate = URL.createObjectURL(testImage);
+    // console.log(urlCreate);
+    let list = masterList;
+    let item = {
+      name: newName,
+      image: testImage,
+      date: newDate,
+      album: newAlbum,
+      people: [newPeople],
+      places: [newPlace],
+    };
+    list.push(item);
+    updateMaster(list);
   };
 
   return (
@@ -222,12 +249,53 @@ const Menu = () => {
         </ul>
       </div>
       <section className="bottomSection spacing">
-        <button>Add Photo</button>
+        <button onClick={() => setAddStatus("show")}>Add Photo</button>
         <div className="spacing">
           <label htmlFor="sliderInput"># per view</label>
           <input type="range" id="sliderInput" />
         </div>
       </section>
+      <div className={`${addStatus} addPhotoModal`}>
+        <h3>Add Photo to Gallery</h3>
+        <div className="photoInputs">
+          <input
+            type="file"
+            accept="image/*"
+            value={newImage}
+            onChange={(e) => setNewImage(e.target.value)}
+          />
+          <input
+            type="date"
+            value={newDate}
+            onChange={(e) => setNewDate(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Title"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Album"
+            value={newAlbum}
+            onChange={(e) => setNewAlbum(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="People (seperate with commas)"
+            value={newPeople}
+            onChange={(e) => setNewPeople(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Place"
+            value={newPlace}
+            onChange={(e) => setNewPlace(e.target.value)}
+          />
+        </div>
+        <button onClick={addPhoto}>Submit</button>
+      </div>
     </div>
   );
 };

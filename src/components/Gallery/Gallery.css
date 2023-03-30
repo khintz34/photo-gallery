@@ -22,14 +22,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: auto;
-  gap: 3vw;
+  gap: 2vw;
   width: 80vw;
   justify-items: center;
 }
 
 .picContainer {
-  height: 10vw;
-  width: 10vw;
+  height: 13vw;
+  width: 13vw;
   color: white;
 }
 
