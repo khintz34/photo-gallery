@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { PhotoArray } from "../../assets/PhotoArray";
 import "./Gallery.css";
 import format from "date-fns/format";
@@ -8,6 +8,8 @@ import { useMenuStore } from "../../stores/menuStore";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGalleryStore } from "../../stores/photoGallery";
+import { MainListContext } from "../../contexts/MainListContext";
+import { GalleryListContext } from "../../contexts/GalleryListContext";
 
 const Gallery = () => {
   const sortedPhotoArray = PhotoArray.sort(function (a, b) {
@@ -28,12 +30,20 @@ const Gallery = () => {
   const photoGallery = useGalleryStore((state) => state.gallery);
   const masterList = useGalleryStore((state) => state.masterList);
   const updateMaster = useGalleryStore((state) => state.changeMasterList);
+  const { mainList, setMainList } = useContext(MainListContext);
+  const { galleryList, setGalleryList } = useContext(GalleryListContext);
 
   const closeModal = () => {
     if (viewingStatus === "show") {
       changeViewingStatus("hide");
     }
   };
+
+  useEffect(() => {
+    console.log(mainList);
+  }, []);
+
+  // replacing photoGallery with galleryList
 
   document.onkeydown = checkKey;
 
@@ -49,7 +59,7 @@ const Gallery = () => {
       decreaseNumber();
     } else if (e.keyCode == "39" || direction === "d") {
       // right arrow
-      if (viewingNumber === photoGallery.length - 1) {
+      if (viewingNumber === galleryList.length - 1) {
         changeViewingStatus("hide");
         return;
       }
@@ -67,16 +77,16 @@ const Gallery = () => {
       <div id="galleryMain" onClick={closeModal}>
         {(() => {
           let pics = [];
-          for (let i = 0; i < photoGallery.length; i++) {
+          for (let i = 0; i < galleryList.length; i++) {
             pics.push(
               <div
                 className="picContainer"
-                key={`${photoGallery[i].name}-image`}
+                key={`${galleryList[i].name}-image-${i}`}
               >
                 <img
                   id={`photoImage-${i}`}
-                  src={photoGallery[i].image}
-                  alt={photoGallery[i].name}
+                  src={galleryList[i].image}
+                  alt={galleryList[i].name}
                   className="photoArrayImage"
                   onClick={() => {
                     setViewImage(i);
@@ -96,12 +106,12 @@ const Gallery = () => {
         onClick={closeModal}
       >
         <img
-          src={photoGallery[viewingNumber].image}
+          src={galleryList[viewingNumber].image}
           className="viewport"
           alt=""
         />
         <h3 className="viewportDate">
-          {format(new Date(photoList[viewingNumber].date), "PPP")}
+          {format(new Date(galleryList[viewingNumber].date), "PPP")}
         </h3>
         <button className="exitBtn">
           <FontAwesomeIcon icon={faX} onClick={closeModal} />

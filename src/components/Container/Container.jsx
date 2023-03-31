@@ -8,7 +8,6 @@ const Container = () => {
   return (
     <div id="mainContainer">
       <Menu />
-
       <section id="mainSection">
         <Header />
         <Gallery />

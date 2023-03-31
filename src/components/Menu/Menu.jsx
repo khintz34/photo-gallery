@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "./Menu.css";
 import { PhotoArray } from "../../assets/PhotoArray";
 import { useViewPortStore } from "../../stores/viewPortStore";
@@ -7,12 +7,15 @@ import { capAll } from "../../assets/utils";
 import { useMenuStore } from "../../stores/menuStore";
 import { useGalleryStore } from "../../stores/photoGallery";
 import testImage from "../../assets/photoLib/bridgeV.jpg";
+import format from "date-fns/format";
+import { MainListContext } from "../../contexts/MainListContext";
+import { GalleryListContext } from "../../contexts/GalleryListContext";
 
 const Menu = () => {
   const [placeList, setPlaceList] = useState([]);
   const [peopleList, setPeopleList] = useState([]);
   const [albumList, setAlbumList] = useState([]);
-  const [addStatus, setAddStatus] = useState("hide");
+  const [addStatus, setAddStatus] = useState("down");
   const changeViewingStatus = useViewPortStore((state) => state.changeStatus);
   const changeAlbum = useMenuStore((state) => state.changeAlbum);
   const currentAlbum = useMenuStore((state) => state.album);
@@ -26,14 +29,18 @@ const Menu = () => {
   const personRef = useRef();
   const [newName, setNewName] = useState("");
   const [newImage, setNewImage] = useState("");
-  const [newDate, setNewDate] = useState("");
-  const [newPeople, setNewPeople] = useState("");
+  const [newDate, setNewDate] = useState(format(new Date(), "yyyy-MM-dd"));
+  const [newPeople, setNewPeople] = useState([]);
   const [newAlbum, setNewAlbum] = useState("");
-  const [newPlace, setNewPlace] = useState("");
+  const [newPlace, setNewPlace] = useState([]);
+  const { mainList, setMainList } = useContext(MainListContext);
+  const { galleryList, setGalleryList } = useContext(GalleryListContext);
+
+  // photoGallery and changeGallery with galleryList and setGalleryList
 
   const getPlaceList = () => {
     let placesList = [];
-    masterList.map((val) => {
+    mainList.map((val) => {
       if (val.places.length !== 0) {
         val.places.map((place) => {
           placesList.push(capAll(place));
@@ -45,7 +52,7 @@ const Menu = () => {
 
   const getPeopleList = () => {
     let peoplesList = [];
-    masterList.map((val) => {
+    mainList.map((val) => {
       if (val.people.length !== 0) {
         val.people.map((person) => {
           peoplesList.push(capAll(person));
@@ -57,7 +64,7 @@ const Menu = () => {
 
   const getAlbumList = () => {
     let list = [];
-    masterList.map((val) => {
+    mainList.map((val) => {
       list.push(capAll(val.album));
     });
     eliminateDuplicates(list, "album");
@@ -93,7 +100,8 @@ const Menu = () => {
     getPlaceList();
     getPeopleList();
     getAlbumList();
-  }, []);
+    console.log(mainList);
+  }, [mainList]);
 
   const makePersonChange = (e) => {
     const person = e.target.value;
@@ -103,12 +111,12 @@ const Menu = () => {
     changeAlbum("");
 
     if (person === "All") {
-      changeGallery(masterList);
+      setGalleryList(mainList);
       return;
     }
 
     let newList = [];
-    masterList.map((value) => {
+    mainList.map((value) => {
       value.people.map((name) => {
         if (name === person) {
           newList.push(value);
@@ -116,7 +124,7 @@ const Menu = () => {
       });
     });
 
-    changeGallery(newList);
+    setGalleryList(newList);
   };
 
   const makePlaceChange = (e) => {
@@ -127,12 +135,12 @@ const Menu = () => {
     changeAlbum("");
 
     if (place === "All") {
-      changeGallery(masterList);
+      setGalleryList(mainList);
       return;
     }
 
     let newList = [];
-    masterList.map((value) => {
+    mainList.map((value) => {
       value.places.map((loc) => {
         if (loc.toLowerCase() === place.toLowerCase()) {
           newList.push(value);
@@ -140,7 +148,7 @@ const Menu = () => {
       });
     });
 
-    changeGallery(newList);
+    setGalleryList(newList);
   };
 
   const viewAlbum = (e, name) => {
@@ -151,36 +159,41 @@ const Menu = () => {
     personRef.current.selectedIndex = 0;
 
     if (name === "") {
-      changeGallery(masterList);
+      setGalleryList(mainList);
       return;
     }
 
     let newList = [];
-    masterList.map((value) => {
+    mainList.map((value) => {
+      console.log(value);
       if (value.album.toLowerCase() === name.toLowerCase()) {
         newList.push(value);
       }
     });
 
-    changeGallery(newList);
+    setGalleryList(newList);
   };
 
   const addPhoto = () => {
-    if (newImage.length < 1) return;
-    setAddStatus("hide");
-    // let urlCreate = URL.createObjectURL(testImage);
-    // console.log(urlCreate);
-    let list = masterList;
+    if (newImage.length < 1 || newName === "") return;
+    setAddStatus("down");
+    if (newDate === "") setNewDate(new Date());
+    let urlCreate = URL.createObjectURL(newImage);
+    console.log(urlCreate);
+    let list = mainList;
     let item = {
       name: newName,
-      image: testImage,
-      date: newDate,
+      image: urlCreate,
+      date: new Date(newDate),
       album: newAlbum,
       people: [newPeople],
       places: [newPlace],
     };
+    console.log(item);
     list.push(item);
     updateMaster(list);
+    setGalleryList(list);
+    setMainList(list);
   };
 
   return (
@@ -249,7 +262,7 @@ const Menu = () => {
         </ul>
       </div>
       <section className="bottomSection spacing">
-        <button onClick={() => setAddStatus("show")}>Add Photo</button>
+        <button onClick={() => setAddStatus("up")}>Add Photo</button>
         <div className="spacing">
           <label htmlFor="sliderInput"># per view</label>
           <input type="range" id="sliderInput" />
@@ -261,8 +274,11 @@ const Menu = () => {
           <input
             type="file"
             accept="image/*"
-            value={newImage}
-            onChange={(e) => setNewImage(e.target.value)}
+            // value={newImage}
+            onChange={(e) => {
+              setNewImage(e.target.files[0]);
+              console.log(e);
+            }}
           />
           <input
             type="date"
