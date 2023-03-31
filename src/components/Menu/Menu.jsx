@@ -21,10 +21,7 @@ const Menu = () => {
   const currentAlbum = useMenuStore((state) => state.album);
   const changePerson = useMenuStore((state) => state.changePerson);
   const changePlace = useMenuStore((state) => state.changePlace);
-  const photoGallery = useGalleryStore((state) => state.gallery);
-  const changeGallery = useGalleryStore((state) => state.changeGallery);
-  const masterList = useGalleryStore((state) => state.masterList);
-  const updateMaster = useGalleryStore((state) => state.changeMasterList);
+  const viewingNumber = useViewNumberStore((state) => state.viewingNumber);
   const placeRef = useRef();
   const personRef = useRef();
   const [newName, setNewName] = useState("");
@@ -32,11 +29,10 @@ const Menu = () => {
   const [newDate, setNewDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [newPeople, setNewPeople] = useState([]);
   const [newAlbum, setNewAlbum] = useState("");
-  const [newPlace, setNewPlace] = useState([]);
+  const [newPlace, setNewPlace] = useState("");
   const { mainList, setMainList } = useContext(MainListContext);
   const { galleryList, setGalleryList } = useContext(GalleryListContext);
-
-  // photoGallery and changeGallery with galleryList and setGalleryList
+  const changeViewingNumber = useViewNumberStore((state) => state.changeStatus);
 
   const getPlaceList = () => {
     let placesList = [];
@@ -105,9 +101,11 @@ const Menu = () => {
   }, [mainList]);
 
   const makePersonChange = (e) => {
+    changeViewingNumber(0);
     const person = e.target.value;
     changePerson(person);
     changePlace("");
+    setAddStatus("down");
     placeRef.current.selectedIndex = 0;
     changeAlbum("");
 
@@ -129,7 +127,9 @@ const Menu = () => {
   };
 
   const makePlaceChange = (e) => {
+    changeViewingNumber(0);
     const place = e.target.value;
+    setAddStatus("down");
     changePerson(place);
     changePerson("");
     personRef.current.selectedIndex = 0;
@@ -153,9 +153,11 @@ const Menu = () => {
   };
 
   const viewAlbum = (e, name) => {
+    changeViewingNumber(0);
     changePerson("");
     changePlace("");
     changeAlbum();
+    setAddStatus("down");
     placeRef.current.selectedIndex = 0;
     personRef.current.selectedIndex = 0;
 
@@ -171,6 +173,8 @@ const Menu = () => {
       }
     });
 
+    console.log(newList);
+
     setGalleryList(newList);
   };
 
@@ -179,8 +183,8 @@ const Menu = () => {
     setAddStatus("down");
     if (newDate === "") setNewDate(new Date());
     let urlCreate = URL.createObjectURL(newImage);
-    console.log(urlCreate);
     let list = mainList;
+    console.log(newPlace);
     let item = {
       name: newName,
       image: urlCreate,
@@ -191,7 +195,6 @@ const Menu = () => {
     };
     console.log(item);
     list.push(item);
-    updateMaster(list);
     setGalleryList(list);
     setMainList([...list]);
   };
@@ -274,7 +277,6 @@ const Menu = () => {
           <input
             type="file"
             accept="image/*"
-            // value={newImage}
             onChange={(e) => {
               setNewImage(e.target.files[0]);
               console.log(e);
@@ -301,7 +303,12 @@ const Menu = () => {
             type="text"
             placeholder="People (seperate with commas)"
             value={newPeople}
-            onChange={(e) => setNewPeople(e.target.value)}
+            onChange={(e) => {
+              let string = e.target.value;
+              string.split(", ");
+              console.log(string);
+              setNewPeople(string);
+            }}
           />
           <input
             type="text"

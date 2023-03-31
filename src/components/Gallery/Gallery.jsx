@@ -40,7 +40,7 @@ const Gallery = () => {
   };
 
   useEffect(() => {
-    console.log(mainList);
+    console.log(galleryList);
   }, []);
 
   // replacing photoGallery with galleryList
