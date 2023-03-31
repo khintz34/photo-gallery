@@ -100,6 +100,7 @@ const Menu = () => {
     getPlaceList();
     getPeopleList();
     getAlbumList();
+    console.log(galleryList);
     console.log(mainList);
   }, [mainList]);
 
@@ -165,7 +166,6 @@ const Menu = () => {
 
     let newList = [];
     mainList.map((value) => {
-      console.log(value);
       if (value.album.toLowerCase() === name.toLowerCase()) {
         newList.push(value);
       }
@@ -193,7 +193,7 @@ const Menu = () => {
     list.push(item);
     updateMaster(list);
     setGalleryList(list);
-    setMainList(list);
+    setMainList([...list]);
   };
 
   return (
