@@ -180,6 +180,9 @@ const Menu = () => {
 
   const addPhoto = () => {
     if (newImage.length < 1 || newName === "") return;
+    let peopleArray = new Array();
+    peopleArray = newPeople.split(", ");
+    console.log(peopleArray);
     setAddStatus("down");
     if (newDate === "") setNewDate(new Date());
     let urlCreate = URL.createObjectURL(newImage);
@@ -190,7 +193,7 @@ const Menu = () => {
       image: urlCreate,
       date: new Date(newDate),
       album: newAlbum,
-      people: [newPeople],
+      people: peopleArray,
       places: [newPlace],
     };
     console.log(item);
@@ -304,10 +307,7 @@ const Menu = () => {
             placeholder="People (seperate with commas)"
             value={newPeople}
             onChange={(e) => {
-              let string = e.target.value;
-              string.split(", ");
-              console.log(string);
-              setNewPeople(string);
+              setNewPeople(e.target.value);
             }}
           />
           <input
