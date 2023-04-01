@@ -10,15 +10,14 @@ import testImage from "../../assets/photoLib/bridgeV.jpg";
 import format from "date-fns/format";
 import { MainListContext } from "../../contexts/MainListContext";
 import { GalleryListContext } from "../../contexts/GalleryListContext";
+import { GalleryStyleContext } from "../../contexts/GalleryStyleContext";
 
 const Menu = () => {
   const [placeList, setPlaceList] = useState([]);
   const [peopleList, setPeopleList] = useState([]);
   const [albumList, setAlbumList] = useState([]);
   const [addStatus, setAddStatus] = useState("down");
-  const changeViewingStatus = useViewPortStore((state) => state.changeStatus);
   const changeAlbum = useMenuStore((state) => state.changeAlbum);
-  const currentAlbum = useMenuStore((state) => state.album);
   const changePerson = useMenuStore((state) => state.changePerson);
   const changePlace = useMenuStore((state) => state.changePlace);
   const viewingNumber = useViewNumberStore((state) => state.viewingNumber);
@@ -33,6 +32,8 @@ const Menu = () => {
   const { mainList, setMainList } = useContext(MainListContext);
   const { galleryList, setGalleryList } = useContext(GalleryListContext);
   const changeViewingNumber = useViewNumberStore((state) => state.changeStatus);
+  const [sliderState, setSliderState] = useState(5);
+  const { galleryStyle, setGalleryStyle } = useContext(GalleryStyleContext);
 
   const getPlaceList = () => {
     let placesList = [];
@@ -96,8 +97,6 @@ const Menu = () => {
     getPlaceList();
     getPeopleList();
     getAlbumList();
-    console.log(galleryList);
-    console.log(mainList);
   }, [mainList]);
 
   const makePersonChange = (e) => {
@@ -173,8 +172,6 @@ const Menu = () => {
       }
     });
 
-    console.log(newList);
-
     setGalleryList(newList);
   };
 
@@ -182,12 +179,10 @@ const Menu = () => {
     if (newImage.length < 1 || newName === "") return;
     let peopleArray = new Array();
     peopleArray = newPeople.split(", ");
-    console.log(peopleArray);
     setAddStatus("down");
     if (newDate === "") setNewDate(new Date());
     let urlCreate = URL.createObjectURL(newImage);
     let list = mainList;
-    console.log(newPlace);
     let item = {
       name: newName,
       image: urlCreate,
@@ -196,7 +191,6 @@ const Menu = () => {
       people: peopleArray,
       places: [newPlace],
     };
-    console.log(item);
     list.push(item);
     setGalleryList(list);
     setMainList([...list]);
@@ -271,7 +265,16 @@ const Menu = () => {
         <button onClick={() => setAddStatus("up")}>Add Photo</button>
         <div className="spacing">
           <label htmlFor="sliderInput"># per view</label>
-          <input type="range" id="sliderInput" />
+          <input
+            type="range"
+            id="sliderInput"
+            onChange={(e) => {
+              setGalleryStyle(e.target.value);
+            }}
+            max="10"
+            min="3"
+            value={sliderState}
+          />
         </div>
       </section>
       <div className={`${addStatus} addPhotoModal`}>
@@ -282,7 +285,6 @@ const Menu = () => {
             accept="image/*"
             onChange={(e) => {
               setNewImage(e.target.files[0]);
-              console.log(e);
             }}
           />
           <input

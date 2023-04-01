@@ -10,15 +10,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGalleryStore } from "../../stores/photoGallery";
 import { MainListContext } from "../../contexts/MainListContext";
 import { GalleryListContext } from "../../contexts/GalleryListContext";
+import { GalleryStyleContext } from "../../contexts/GalleryStyleContext";
 
 const Gallery = () => {
+  const { galleryList, setGalleryList } = useContext(GalleryListContext);
   const sortedPhotoArray = PhotoArray.sort(function (a, b) {
     return new Date(a.date) - new Date(b.date);
   });
-  const [photoList, setPhotoList] = useState(PhotoArray);
-
-  const firstDate = format(new Date(photoList[0].date), "PPP");
-  const lastDate = format(new Date(photoList.at(-1).date), "PPP");
+  const firstDate = format(new Date(galleryList[0].date), "PPP");
+  const lastDate = format(new Date(galleryList.at(-1).date), "PPP");
   const [viewImage, setViewImage] = useState(0);
   const viewingStatus = useViewPortStore((state) => state.viewingStatus);
   const changeViewingStatus = useViewPortStore((state) => state.changeStatus);
@@ -31,19 +31,27 @@ const Gallery = () => {
   const masterList = useGalleryStore((state) => state.masterList);
   const updateMaster = useGalleryStore((state) => state.changeMasterList);
   const { mainList, setMainList } = useContext(MainListContext);
-  const { galleryList, setGalleryList } = useContext(GalleryListContext);
+  const { galleryStyle, setGalleryStyle } = useContext(GalleryStyleContext);
+  const [columnNumber, setColumnNumber] = useState("1fr 1fr 1fr 1fr 1fr");
 
   const closeModal = () => {
+    console.log("closing");
     if (viewingStatus === "show") {
       changeViewingStatus("hide");
     }
   };
 
   useEffect(() => {
-    console.log(galleryList);
-  }, []);
+    decideTemplateColumns();
+  }, [galleryStyle]);
 
-  // replacing photoGallery with galleryList
+  const decideTemplateColumns = () => {
+    let columnStyle = [];
+    for (let i = 0; i < galleryStyle; i++) {
+      columnStyle.push("1fr");
+    }
+    setColumnNumber(columnStyle.join(" "));
+  };
 
   document.onkeydown = checkKey;
 
@@ -69,12 +77,24 @@ const Gallery = () => {
     }
   }
 
+  function removeImage(e) {
+    console.log(viewingNumber);
+    let newArray = mainList;
+    newArray.splice(viewingNumber, 1);
+    console.log(newArray);
+    setMainList(newArray);
+  }
+
   return (
     <div id="galleryContainer">
       <div id="dateContainer">
         {firstDate} - {lastDate}{" "}
       </div>
-      <div id="galleryMain" onClick={closeModal}>
+      <div
+        className="galleryMain"
+        onClick={closeModal}
+        style={{ gridTemplateColumns: columnNumber }}
+      >
         {(() => {
           let pics = [];
           for (let i = 0; i < galleryList.length; i++) {
@@ -115,6 +135,9 @@ const Gallery = () => {
         </h3>
         <button className="exitBtn">
           <FontAwesomeIcon icon={faX} onClick={closeModal} />
+        </button>
+        <button className="removeImage" onClick={(e) => removeImage(e)}>
+          Remove Image
         </button>
       </div>
     </div>
