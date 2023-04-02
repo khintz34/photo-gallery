@@ -17,8 +17,8 @@ const Gallery = () => {
   const sortedPhotoArray = PhotoArray.sort(function (a, b) {
     return new Date(a.date) - new Date(b.date);
   });
-  const firstDate = format(new Date(galleryList[0].date), "PPP");
-  const lastDate = format(new Date(galleryList.at(-1).date), "PPP");
+  let firstDate = format(new Date(galleryList[0].date), "PPP");
+  let lastDate = format(new Date(galleryList.at(-1).date), "PPP");
   const [viewImage, setViewImage] = useState(0);
   const viewingStatus = useViewPortStore((state) => state.viewingStatus);
   const changeViewingStatus = useViewPortStore((state) => state.changeStatus);
@@ -35,7 +35,6 @@ const Gallery = () => {
   const [columnNumber, setColumnNumber] = useState("1fr 1fr 1fr 1fr 1fr");
 
   const closeModal = () => {
-    console.log("closing");
     if (viewingStatus === "show") {
       changeViewingStatus("hide");
     }
@@ -78,11 +77,27 @@ const Gallery = () => {
   }
 
   function removeImage(e) {
-    console.log(viewingNumber);
+    changeViewingNumber(0);
+    changeViewingStatus("hide");
+    let activeImageName = galleryList[viewingNumber].name;
     let newArray = mainList;
-    newArray.splice(viewingNumber, 1);
-    console.log(newArray);
+    let removeNum;
+    newArray.map((val, index) => {
+      if (val.name === activeImageName) {
+        removeNum = index;
+      }
+    });
+    newArray.splice(removeNum, 1);
     setMainList(newArray);
+
+    //also remove from gallery
+    let newGallery = galleryList;
+    newGallery.splice(viewingNumber, 1);
+    if (newGallery.length === 0) {
+      firstDate = format(new Date(mainList[0].date), "PPP");
+      lastDate = format(new Date(mainList.at(-1).date), "PPP");
+    }
+    setGalleryList(newGallery);
   }
 
   return (
@@ -96,6 +111,9 @@ const Gallery = () => {
         style={{ gridTemplateColumns: columnNumber }}
       >
         {(() => {
+          if (galleryList.length === 0) {
+            return <div></div>;
+          }
           let pics = [];
           for (let i = 0; i < galleryList.length; i++) {
             pics.push(

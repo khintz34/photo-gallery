@@ -11,6 +11,8 @@ import format from "date-fns/format";
 import { MainListContext } from "../../contexts/MainListContext";
 import { GalleryListContext } from "../../contexts/GalleryListContext";
 import { GalleryStyleContext } from "../../contexts/GalleryStyleContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faX } from "@fortawesome/free-solid-svg-icons";
 
 const Menu = () => {
   const [placeList, setPlaceList] = useState([]);
@@ -23,6 +25,7 @@ const Menu = () => {
   const viewingNumber = useViewNumberStore((state) => state.viewingNumber);
   const placeRef = useRef();
   const personRef = useRef();
+  const imageRef = useRef();
   const [newName, setNewName] = useState("");
   const [newImage, setNewImage] = useState("");
   const [newDate, setNewDate] = useState(format(new Date(), "yyyy-MM-dd"));
@@ -34,13 +37,20 @@ const Menu = () => {
   const changeViewingNumber = useViewNumberStore((state) => state.changeStatus);
   const [sliderState, setSliderState] = useState(5);
   const { galleryStyle, setGalleryStyle } = useContext(GalleryStyleContext);
+  const [activeAlb, setActiveAlb] = useState("");
+  const [peopleStatus, setPeopleStatus] = useState("hide");
+  const [placeStatus, setPlaceStatus] = useState("hide");
+  const [sliderMax, setSliderMax] = useState(10);
+  const [sliderMin, setSliderMin] = useState(3);
 
   const getPlaceList = () => {
     let placesList = [];
     mainList.map((val) => {
       if (val.places.length !== 0) {
         val.places.map((place) => {
-          placesList.push(capAll(place));
+          if (place !== "") {
+            placesList.push(capAll(place));
+          }
         });
       }
     });
@@ -93,10 +103,17 @@ const Menu = () => {
     }
   }
 
-  useEffect(() => {
+  function createLists() {
     getPlaceList();
     getPeopleList();
     getAlbumList();
+  }
+
+  useEffect(() => {
+    // getPlaceList();
+    // getPeopleList();
+    // getAlbumList();
+    createLists();
   }, [mainList]);
 
   const makePersonChange = (e) => {
@@ -107,6 +124,7 @@ const Menu = () => {
     setAddStatus("down");
     placeRef.current.selectedIndex = 0;
     changeAlbum("");
+    setActiveAlb("");
 
     if (person === "All") {
       setGalleryList(mainList);
@@ -133,6 +151,7 @@ const Menu = () => {
     changePerson("");
     personRef.current.selectedIndex = 0;
     changeAlbum("");
+    setActiveAlb("");
 
     if (place === "All") {
       setGalleryList(mainList);
@@ -152,6 +171,7 @@ const Menu = () => {
   };
 
   const viewAlbum = (e, name) => {
+    setActiveAlb(name);
     changeViewingNumber(0);
     changePerson("");
     changePlace("");
@@ -159,26 +179,26 @@ const Menu = () => {
     setAddStatus("down");
     placeRef.current.selectedIndex = 0;
     personRef.current.selectedIndex = 0;
-
     if (name === "") {
       setGalleryList(mainList);
       return;
     }
-
     let newList = [];
     mainList.map((value) => {
       if (value.album.toLowerCase() === name.toLowerCase()) {
         newList.push(value);
       }
     });
-
     setGalleryList(newList);
   };
 
   const addPhoto = () => {
     if (newImage.length < 1 || newName === "") return;
     let peopleArray = new Array();
-    peopleArray = newPeople.split(", ");
+    if (newPeople.length !== 0) {
+      peopleArray = newPeople.split(", ");
+    }
+
     setAddStatus("down");
     if (newDate === "") setNewDate(new Date());
     let urlCreate = URL.createObjectURL(newImage);
@@ -194,21 +214,59 @@ const Menu = () => {
     list.push(item);
     setGalleryList(list);
     setMainList([...list]);
+    // post add
+    setNewAlbum("");
+    setNewDate(format(new Date(), "yyyy-MM-dd"));
+    setNewName("");
+    setNewPeople([]);
+    setNewPlace("");
   };
+
+  function changePeopleStatus() {
+    if (peopleStatus === "show") {
+      setPeopleStatus("hide");
+    } else {
+      setPeopleStatus("show");
+    }
+    setPlaceStatus("hide");
+  }
+
+  function changePlaceStatus() {
+    if (placeStatus === "show") {
+      setPlaceStatus("hide");
+    } else {
+      setPlaceStatus("show");
+    }
+    setPeopleStatus("hide");
+  }
+
+  function hideStatus() {
+    setPlaceStatus("hide");
+    setPeopleStatus("hide");
+  }
 
   return (
     <div id="menuContainer">
       <ul className="menuList">
-        <li className="album-li" onClick={(e) => viewAlbum(e, "")}>
+        <li
+          className="album-li"
+          onClick={(e) => {
+            viewAlbum(e, "");
+            hideStatus();
+          }}
+        >
           All Photos
         </li>
-        <label htmlFor="people">People</label>
+        <label htmlFor="people" onClick={changePeopleStatus}>
+          People
+        </label>
 
         <select
           name="people"
           id="people"
           onChange={makePersonChange}
           ref={personRef}
+          className={peopleStatus}
         >
           <option value="" disabled hidden selected>
             Choose Person
@@ -222,13 +280,16 @@ const Menu = () => {
             );
           })}
         </select>
-        <label htmlFor="places">Places</label>
+        <label htmlFor="places" onClick={changePlaceStatus}>
+          Places
+        </label>
 
         <select
           name="places"
           id="places"
           onChange={makePlaceChange}
           ref={placeRef}
+          className={placeStatus}
         >
           <option value="" disabled selected hidden>
             Choose Place
@@ -244,7 +305,13 @@ const Menu = () => {
         </select>
       </ul>
       <div className="albumList">
-        <p className="album-li" onClick={(e) => viewAlbum(e, "")}>
+        <p
+          className="album-li"
+          onClick={(e) => {
+            viewAlbum(e, "");
+            hideStatus();
+          }}
+        >
           Albums
         </p>
         <ul className="menuList">
@@ -252,8 +319,15 @@ const Menu = () => {
             return (
               <li
                 key={`album-${val}`}
-                onClick={(e) => viewAlbum(e, val)}
-                className="album-li"
+                onClick={(e) => {
+                  setActiveAlb(val);
+                  viewAlbum(e, val);
+                  hideStatus();
+                }}
+                // className="album-li"
+                className={`album-li ${
+                  activeAlb === val ? "activeAlb" : "inactiveAlb"
+                }`}
               >
                 {val}
               </li>
@@ -262,7 +336,14 @@ const Menu = () => {
         </ul>
       </div>
       <section className="bottomSection spacing">
-        <button onClick={() => setAddStatus("up")}>Add Photo</button>
+        <button
+          onClick={() => {
+            setAddStatus("up");
+            hideStatus();
+          }}
+        >
+          Add Photo
+        </button>
         <div className="spacing">
           <label htmlFor="sliderInput"># per view</label>
           <input
@@ -270,10 +351,10 @@ const Menu = () => {
             id="sliderInput"
             onChange={(e) => {
               setGalleryStyle(e.target.value);
+              hideStatus();
             }}
-            max="10"
-            min="3"
-            value={sliderState}
+            max={sliderMax}
+            min={sliderMin}
           />
         </div>
       </section>
@@ -286,6 +367,7 @@ const Menu = () => {
             onChange={(e) => {
               setNewImage(e.target.files[0]);
             }}
+            ref={imageRef}
           />
           <input
             type="date"
@@ -320,6 +402,13 @@ const Menu = () => {
           />
         </div>
         <button onClick={addPhoto}>Submit</button>
+        <button className="exitBtnAdd">
+          <FontAwesomeIcon
+            icon={faX}
+            onClick={() => setAddStatus("down")}
+            className="exitIcon"
+          />
+        </button>
       </div>
     </div>
   );
