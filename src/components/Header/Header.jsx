@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import "./Header.css";
 import { useMobileStore } from "../../stores/mobileSetting";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { ShowHeaderContext } from "../../contexts/MainListContext";
 
 const Header = () => {
   const mobileStatus = useMobileStore((state) => state.mobileStatus);
   const changeMobileStatus = useMobileStore((state) => state.changeStatus);
+  const { showHeader, setShowHeader } = useContext(ShowHeaderContext);
   const screenWidth = screen.width;
 
   useEffect(() => {
@@ -17,11 +19,19 @@ const Header = () => {
     }
   });
 
+  function changeMenuStatus() {
+    if (showHeader === "left") {
+      setShowHeader("right");
+    } else {
+      setShowHeader("left");
+    }
+  }
+
   return (
     <div id="headerContainer">
       <h1 id="mainHeader">Photo Gallery</h1>
       <div className="menuBtn">
-        <FontAwesomeIcon icon={faBars} />
+        <FontAwesomeIcon icon={faBars} onClick={changeMenuStatus} />
       </div>
     </div>
   );

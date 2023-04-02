@@ -8,7 +8,10 @@ import { useMenuStore } from "../../stores/menuStore";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGalleryStore } from "../../stores/photoGallery";
-import { MainListContext } from "../../contexts/MainListContext";
+import {
+  MainListContext,
+  ShowHeaderContext,
+} from "../../contexts/MainListContext";
 import { GalleryListContext } from "../../contexts/GalleryListContext";
 import { GalleryStyleContext } from "../../contexts/GalleryStyleContext";
 
@@ -33,6 +36,7 @@ const Gallery = () => {
   const { mainList, setMainList } = useContext(MainListContext);
   const { galleryStyle, setGalleryStyle } = useContext(GalleryStyleContext);
   const [columnNumber, setColumnNumber] = useState("1fr 1fr 1fr 1fr 1fr");
+  const { showHeader, setShowHeader } = useContext(ShowHeaderContext);
 
   const closeModal = () => {
     if (viewingStatus === "show") {

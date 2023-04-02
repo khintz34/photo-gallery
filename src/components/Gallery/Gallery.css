@@ -110,4 +110,14 @@
     left: 0;
     text-align: center;
   }
+
+  .viewportContainer {
+    width: 100vw;
+    left: 0;
+    border: none;
+  }
+
+  .exitBtn {
+    top: 6vh;
+  }
 }

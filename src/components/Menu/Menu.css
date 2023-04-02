@@ -1,4 +1,4 @@
-#menuContainer {
+.menuContainer {
   width: 20vw;
   height: 100vh;
   background-color: var(--accent-gray);
@@ -111,12 +111,86 @@ input[type="text"] {
 }
 
 @media (max-width: 500px) {
-  #menuContainer {
-    display: none;
+  .menuContainer {
+    /* display: none; */
+    width: 0vw;
+    overflow: hidden;
+    transition: width 0.5s ease-in;
+    padding-top: 10vh;
+    font-size: 3vh;
+    z-index: 10;
+    border-top: 5px solid rgb(234, 114, 245);
   }
 
   .picContainer {
     height: 90%;
     width: 90%;
+  }
+
+  .left {
+    width: 0vw;
+  }
+
+  .right {
+    width: 100vw;
+  }
+
+  .albumList {
+    margin-top: 5vh;
+  }
+
+  .liHeader {
+    font-size: 3.5vh;
+    color: rgb(234, 114, 245);
+    margin-bottom: 1vh;
+  }
+
+  .bottomSection {
+    bottom: 15vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .addPhotoModal {
+    width: 100vw;
+    left: 0;
+  }
+
+  .up {
+    height: 70vh;
+  }
+
+  .exitBtnAdd {
+    margin-top: 0;
+    right: 0;
+    border: none;
+    border-radius: 0%;
+  }
+
+  .photoInputs {
+    display: flex;
+    flex-direction: column;
+  }
+
+  input[type="text"] {
+    width: 65vw;
+    font-size: 2vh;
+  }
+  input[type="date"] {
+    width: 65vw;
+    font-size: 2vh;
+  }
+  input[type="file"] {
+    font-size: 2vh;
+  }
+
+  .addPhotoButton {
+    width: 50vw;
+  }
+
+  #sliderInput {
+    width: 70vw;
   }
 }

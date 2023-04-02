@@ -8,7 +8,10 @@ import { useMenuStore } from "../../stores/menuStore";
 import { useGalleryStore } from "../../stores/photoGallery";
 import testImage from "../../assets/photoLib/bridgeV.jpg";
 import format from "date-fns/format";
-import { MainListContext } from "../../contexts/MainListContext";
+import {
+  MainListContext,
+  ShowHeaderContext,
+} from "../../contexts/MainListContext";
 import { GalleryListContext } from "../../contexts/GalleryListContext";
 import { GalleryStyleContext } from "../../contexts/GalleryStyleContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,6 +48,7 @@ const Menu = () => {
   const [sliderMin, setSliderMin] = useState(3);
   const mobileStatus = useMobileStore((state) => state.mobileStatus);
   const changeMobileStatus = useMobileStore((state) => state.changeStatus);
+  const { showHeader, setShowHeader } = useContext(ShowHeaderContext);
 
   useEffect(() => {
     if (mobileStatus) {
@@ -258,10 +262,10 @@ const Menu = () => {
   }
 
   return (
-    <div id="menuContainer">
+    <div className={`menuContainer ${showHeader}`}>
       <ul className="menuList">
         <li
-          className="album-li"
+          className="album-li liHeader"
           onClick={(e) => {
             viewAlbum(e, "");
             hideStatus();
@@ -317,16 +321,17 @@ const Menu = () => {
         </select>
       </ul>
       <div className="albumList">
-        <p
-          className="album-li"
-          onClick={(e) => {
-            viewAlbum(e, "");
-            hideStatus();
-          }}
-        >
-          Albums
-        </p>
         <ul className="menuList">
+          <li
+            className="album-li liHeader"
+            onClick={(e) => {
+              viewAlbum(e, "");
+              hideStatus();
+            }}
+          >
+            Albums
+          </li>
+
           {albumList.map((val) => {
             return (
               <li
@@ -353,6 +358,7 @@ const Menu = () => {
             setAddStatus("up");
             hideStatus();
           }}
+          className="addPhotoButton"
         >
           Add Photo
         </button>
@@ -388,7 +394,7 @@ const Menu = () => {
           />
           <input
             type="text"
-            placeholder="Title"
+            placeholder="Title (required)"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
           />
