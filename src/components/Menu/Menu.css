@@ -114,4 +114,9 @@ input[type="text"] {
   #menuContainer {
     display: none;
   }
+
+  .picContainer {
+    height: 90%;
+    width: 90%;
+  }
 }

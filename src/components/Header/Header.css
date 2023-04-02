@@ -21,6 +21,9 @@ h1 {
 @media (max-width: 500px) {
   #headerContainer {
     display: flex;
+    position: fixed;
+    top: 0;
+    height: 6vh;
   }
 
   #mainHeader {

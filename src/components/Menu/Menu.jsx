@@ -13,6 +13,7 @@ import { GalleryListContext } from "../../contexts/GalleryListContext";
 import { GalleryStyleContext } from "../../contexts/GalleryStyleContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
+import { useMobileStore } from "../../stores/mobileSetting";
 
 const Menu = () => {
   const [placeList, setPlaceList] = useState([]);
@@ -42,6 +43,17 @@ const Menu = () => {
   const [placeStatus, setPlaceStatus] = useState("hide");
   const [sliderMax, setSliderMax] = useState(10);
   const [sliderMin, setSliderMin] = useState(3);
+  const mobileStatus = useMobileStore((state) => state.mobileStatus);
+  const changeMobileStatus = useMobileStore((state) => state.changeStatus);
+
+  useEffect(() => {
+    if (mobileStatus) {
+      setSliderMax(3);
+      setSliderMin(1);
+      setSliderState(1);
+      setGalleryStyle(1);
+    }
+  });
 
   const getPlaceList = () => {
     let placesList = [];
