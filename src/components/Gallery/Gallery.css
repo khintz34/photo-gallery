@@ -100,12 +100,17 @@
     margin-left: 0;
     width: 100vw;
     max-width: 100vw;
-    margin-top: 6vh;
+    margin-top: 8vh;
+  }
+
+  .picContainer {
+    height: 90%;
+    width: 90%;
   }
 
   #dateContainer {
     width: 100vw;
-    top: 7vh;
+    top: 9vh;
     padding: 0;
     left: 0;
     text-align: center;

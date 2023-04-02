@@ -54,6 +54,7 @@ const Gallery = () => {
       columnStyle.push("1fr");
     }
     setColumnNumber(columnStyle.join(" "));
+    console.log(columnStyle);
   };
 
   document.onkeydown = checkKey;

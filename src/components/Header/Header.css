@@ -25,6 +25,8 @@ h1 {
     top: 0;
     height: 6vh;
     z-index: 50;
+    border-bottom: 5px solid black;
+    padding: 1vh 0vh;
   }
 
   #mainHeader {

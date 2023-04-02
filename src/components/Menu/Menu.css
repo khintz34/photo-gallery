@@ -122,11 +122,6 @@ input[type="text"] {
     border-top: 5px solid rgb(234, 114, 245);
   }
 
-  .picContainer {
-    height: 90%;
-    width: 90%;
-  }
-
   .left {
     width: 0vw;
   }

@@ -141,6 +141,7 @@ const Menu = () => {
     placeRef.current.selectedIndex = 0;
     changeAlbum("");
     setActiveAlb("");
+    setShowHeader("left");
 
     if (person === "All") {
       setGalleryList(mainList);
@@ -168,6 +169,7 @@ const Menu = () => {
     personRef.current.selectedIndex = 0;
     changeAlbum("");
     setActiveAlb("");
+    setShowHeader("left");
 
     if (place === "All") {
       setGalleryList(mainList);
@@ -193,6 +195,7 @@ const Menu = () => {
     changePlace("");
     changeAlbum();
     setAddStatus("down");
+    setShowHeader("left");
     placeRef.current.selectedIndex = 0;
     personRef.current.selectedIndex = 0;
     if (name === "") {
@@ -363,16 +366,19 @@ const Menu = () => {
           Add Photo
         </button>
         <div className="spacing">
-          <label htmlFor="sliderInput"># per view</label>
+          <label htmlFor="sliderInput"># per view ({sliderState})</label>
           <input
             type="range"
             id="sliderInput"
             onChange={(e) => {
               setGalleryStyle(e.target.value);
               hideStatus();
+              setSliderState(e.target.value);
+              console.log(e);
             }}
             max={sliderMax}
             min={sliderMin}
+            value={sliderState}
           />
         </div>
       </section>
