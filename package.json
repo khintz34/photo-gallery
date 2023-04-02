@@ -2,6 +2,7 @@
   "name": "photo-gallery",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://khintz34.github.io/photo-gallery/",
   "type": "module",
   "scripts": {
     "dev": "vite",
